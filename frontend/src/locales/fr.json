@@ -1,0 +1,142 @@
+{
+    "test": "bonjour le monde",
+    "navbar": {
+        "brand": "Belote Avec Amis",
+        "home": "Accueil",
+        "test_room": "Rejoindre la salle de test",
+        "create_new_room": "Créer une nouvelle salle",
+        "gameIDLabel": "Entrez l'ID de la partie pour rejoindre",
+        "joinGameBtnLabel": "Rejoindre",
+        "playersOnline": "Joueurs en ligne",
+        "connected": "Connecté",
+        "disconnected": "Déconnecté",
+        "lang": "Langue",
+        "langs": {
+            "bg": "Bulgare",
+            "en": "Anglais",
+            "fr": "Francais"
+        }
+    },
+    "footer": {
+        "moreInfoLabel": "Plus d'infos ci-dessous",
+        "cookieStatement1": "Ce site n'utilise pas de cookies.",
+        "cookieStatement2": "Pas besoin de s'en inquiéter.",
+        "copyright": "Créé par Hristo Belchev (justitsi). L'interface et le serveur sont des logiciels Open Source (OSS) sous licence MIT.",
+        "copyrightLinkLabel": "Voir les informations sur la licence ici",
+        "githubLinkExplanation": "Des idées ou des suggestions ? Créez une issue sur ",
+        "githubLinkLabel": "GitHub"
+    },
+    "gameIndicator": {
+        "joinBtnLabel": "Rejoindre la partie"
+    },
+    "cardSuits": {
+        "C": "C",
+        "D": "D",
+        "H": "H",
+        "S": "S"
+    },
+    "cardSuitsSymbols": {
+        "C": "♣",
+        "D": "♦",
+        "H": "♥",
+        "S": "♠"
+    },
+    "premiumTypes": {
+        "B": "Belote ",
+        "C": "Série de cartes ",
+        "S": "4 de même "
+    },
+    "gameBoard": {
+        "playerTurnIndicator": "Tour du joueur :",
+        "deckSplitPromptText": "Entrez la carte sur laquelle couper le paquet",
+        "deckSplitPromptSubmitButtonText": "Couper",
+        "suitSelectPromptText": "Veuillez sélectionner une couleur à appeler",
+        "roundOverPromptText": "Fin de la manche",
+        "dealerPlayerLabel": " (Donneur) ",
+        "startingPlayerLabel": " (Commence) "
+    },
+    "playerHand": {
+        "playButtonLable": "Jouer",
+        "reverseCardOrderBtnLabel": "Inverser l'ordre des cartes"
+    },
+    "premuimOptions": {
+        "listLabel": "Liste des options premium",
+        "anounceLabel1": "Les primes sélectionnées seront",
+        "anounceLabel2": "annoncées lorsque vous jouez une carte"
+    },
+    "premiumOption": {
+        "cardSeriesLabel": "Série de cartes",
+        "sameCardsLabel": "4 de même",
+        "cards": "cartes"
+    },
+    "suitSelector": {
+        "selectBtnLabel": "Appeler l'enchère",
+        "currentSuitLabel": "Enchère actuelle :",
+        "anouncedByLabel": "Annoncé par :",
+        "previousBidsLabel": "Enchères précédentes :",
+        "anounced": "annoncé",
+        "passed": "passé",
+        "suits": {
+            "P": "Passer",
+            "C": "♣ Trèfles",
+            "D": "♦ Carreaux",
+            "H": "♥ Cœurs",
+            "S": "♠ Piques",
+            "A": "Tout atout",
+            "N": "Sans atout",
+            "x2": "Contre",
+            "x4": "Re-Contre"
+        }
+    },
+    "handHistory": {
+        "containerLabel": "Historique des mains",
+        "containerLabel3Hands": "Historique des mains (3 dernières)",
+        "containerLabelFull": "Historique des mains (complet)"
+    },
+    "roomChat": {
+        "containerLabel": "Activité du lobby"
+    },
+    "gameStatusIndicator": {
+        "teamLabel": "Équipe",
+        "containerLabel": "État de la partie",
+        "scoreLabel": "Score",
+        "roundNumberLabel": "Numéro de manche",
+        "consecutivePassedGamesLabel": "Parties consécutives passées",
+        "roundSuitLabel": "Couleur de la manche",
+        "roundSuitCallerLabel": " appelé par ",
+        "winningTeamLabel": "Équipe gagnante : ",
+        "waitingForLabelsToConnectLabel": "En attente de quatre joueurs pour se connecter...",
+        "waitingToConnectToServerLabel": "Veuillez vous connecter à un serveur..."
+    },
+    "roundScoreTable": {
+        "team1PointsLabel": "Points de l'équipe 1",
+        "team2PointsLabel": "Points de l'équipe 2",
+        "pointsFromCardsLabel": "Points des cartes",
+        "pointsFromPremiumsLabel": "Points des primes",
+        "pointsFromLastHandLabel": "Points de la dernière main",
+        "roundPointsSumLabel": "Total des points de la manche",
+        "gamePointsLabel": "Scores des points de la partie",
+        "nextRoundTimerLabelPt1": "La prochaine manche commencera dans",
+        "nextRoundTimerLabelPt2": "secondes"
+    },
+    "mainPage": {
+        "introSectionHeader": "Jouez simplement à la Belote.",
+        "introSectionCTAText": "Envie de jouer à la belote sans s'inscrire, pirater votre navigateur pour utiliser Flash ou jouer 5 parties avant de pouvoir jouer avec des amis ? C'est l'endroit idéal. Rejoignez une salle de jeu gratuite et jouez - aucune inscription requise !",
+        "introSectionCTAText2": "Venez jouer.",
+        "joinGameByIDCTAPlaceholder": "Entrez le code pour rejoindre une partie",
+        "joinActiveRoomHeading": "Rejoindre une salle existante",
+        "createNewGameRoomBtnLabel": "Créer une salle",
+        "joinActiveRoomParagraph": "Rejoignez l'une des salles existantes ! Les salles avec plus de joueurs sont en haut pour que leur partie commence plus vite."
+    },
+    "activeRoomCard": {
+        "label": "Lobby",
+        "teamLabel": "Équipe",
+        "connected": "connecté"
+    },
+    "gameUsernamePrompt": {
+        "roomIDLabel": "ID de la salle :",
+        "usernameInputPlaceholder": "Entrez le nom d'utilisateur",
+        "joinGameBtnLabel": "Rejoindre la partie",
+        "usernameInputTooltip": "Si vous rejoignez à nouveau un lobby, utilisez le même nom d'utilisateur que précédemment"
+    }
+}

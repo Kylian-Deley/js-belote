@@ -13,7 +13,8 @@
         "lang": "Language",
         "langs": {
             "bg": "Bulgarian",
-            "en": "English"
+            "en": "English",
+            "fr": "French"
         }
     },
     "footer": {

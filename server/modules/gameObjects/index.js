@@ -121,38 +121,26 @@ class Hand {
 }
 
 class Premium {
-    premium_card_order = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-
-    // assumes cards for types C and 4 are all the same suit
-    // premiumType - (B)elote, (C)ards in sequence, 4 of the (S)ame
     constructor(belongsTo, premiumType, roundTrump, cards) {
         this.belongsTo = belongsTo;
         this.premiumType = premiumType;
         this.roundTrump = roundTrump;
-        this.cards = this.sortCards(cards)
+        this.cards = cards;
 
-        if (premiumType == 'C') this.valid = this.checkValidCardSequence();
-        if (premiumType == 'S') this.valid = this.checkValid4()
-        if (premiumType == 'B') this.valid = this.checkValidBelote()
-        if (roundTrump == 'N') this.valid = false;
+        if (premiumType == 'B') {
+            this.valid = this.checkValidBelote();
+        } else {
+            this.valid = false;  // Prime non valide pour d'autres types
+        }
 
-        this.points = this.calculatePoints()
+        this.points = this.calculatePoints();
     }
 
 
     calculatePoints() {
         if (!this.valid) return 0;
         if (this.premiumType == 'B') return 20;
-        if (this.premiumType == 'S') {
-            if (this.cards[0].rank == '9') return 150;
-            if (this.cards[0].rank == 'J') return 200;
-            return 100;
-        }
-        if (this.premiumType == 'C') {
-            if (this.cards.length == 3) return 20;
-            if (this.cards.length == 4) return 50;
-            return 100;
-        }
+        return 0;  // Aucun point pour d'autres types
     }
 
     checkValidBelote() {
@@ -170,43 +158,6 @@ class Premium {
         return true;
     }
 
-    checkValid4() {
-        if (this.cards.length != 4) return false;
-
-        const rank = this.cards[0].rank;
-        if (rank == '7' || rank == '8') return false;
-        for (const card of this.cards) {
-            if (card.rank != rank) return false;
-        }
-        return true;
-    }
-
-    checkValidCardSequence() {
-        //check card series length  
-        if (this.cards.length < 3) return false;
-        for (let i = 0; i < this.cards.length - 1; i++) {
-            const currentIndex = this.premium_card_order.indexOf(this.cards[i].rank);
-            const nextIndex = this.premium_card_order.indexOf(this.cards[i + 1].rank);
-
-            // check if they're sequencial
-            if (nextIndex - currentIndex != 1) return false;
-            // check if they're the same suit
-            if (this.cards[i].suit != this.cards[i + 1].suit) return false;
-        }
-        return true;
-    }
-
-    sortCards(cards) {
-        const sortedCards = [...cards]
-        const compareCards = (card1, card2) => {
-            let card1rankIndex = this.premium_card_order.indexOf(card1.rank);
-            let card2rankIndex = this.premium_card_order.indexOf(card2.rank);
-            if (card1rankIndex > card2rankIndex) return 1;
-            if (card1rankIndex < card2rankIndex) return -1;
-            return 0;
-        }
-        return sortedCards.sort(compareCards);
-    }
 }
 
 class Round {
@@ -538,67 +489,13 @@ class Round {
     }
 
     getValidPremiums() {
-        const valid_premiums = []
-
-        let highestCPremium;
-        let highestSPremium;
-        //init values and get belote premiums
+        const valid_premiums = [];
         for (const premium of this.premiums) {
-            if (premium.premiumType == 'B') {
-                valid_premiums.push(premium)
-            }
-            if (premium.premiumType == 'C') highestCPremium = premium;
-            if (premium.premiumType == 'S') highestSPremium = premium;
-        }
-        // find highest premiums
-        for (const premium of this.premiums) {
-            if (premium.premiumType == 'C') {
-                //check if the len is the same
-                if (highestCPremium.cards.length > premium.cards.length) {
-                    highestCPremium = premium;
-                }
-                //if the len is the same check which has highest cards
-                else {
-                    if (highestCPremium.cards.length == premium.cards.length) {
-                        if (this.premium_card_order.indexOf(premium.cards[0].rank) > this.premium_card_order.indexOf(highestCPremium.cards[0].rank)) {
-                            highestCPremium = premium;
-                        }
-                    }
-                }
-
-            }
-            if (premium.premiumType == 'S') {
-                if (this.premium_card_order.indexOf(premium.cards[0].rank) > this.premium_card_order.indexOf(highestSPremium.cards[0].rank))
-                    highestSPremium = premium;
+            if (premium.premiumType == 'B' && premium.valid) {
+                valid_premiums.push(premium);
             }
         }
-        // check if there aren't two C premiums with the same strenght that are strongest - that would invalidate all of them if on opposite teams...
-        let c_premiums_valid = true;
-        for (const premium of this.premiums) {
-            if (premium.premiumType == 'C') {
-                if (highestCPremium.cards.length == premium.cards.length) {
-                    if (this.premium_card_order.indexOf(premium.cards[0].rank) == this.premium_card_order.indexOf(highestCPremium.cards[0].rank)) {
-                        if (this.getPlayerTeam(premium.belongsTo) != this.getPlayerTeam(highestCPremium.belongsTo)) {
-                            c_premiums_valid = false;
-                        }
-                    }
-                }
-            }
-        }
-
-        for (const premium of this.premiums) {
-            // add c premiums
-            if (premium.premiumType == 'C')
-                if (c_premiums_valid)
-                    if (this.getPlayerTeam(premium.belongsTo) == this.getPlayerTeam(highestCPremium.belongsTo))
-                        valid_premiums.push(premium)
-            // add s premiums
-            if (premium.premiumType == 'S')
-                if ((this.getPlayerTeam(premium.belongsTo) == this.getPlayerTeam(highestSPremium.belongsTo)))
-                    valid_premiums.push(premium)
-        }
-
-        return valid_premiums
+        return valid_premiums;
     }
 
     // only allow for belote premium when player is playing Q or K - handled in place card function
@@ -625,94 +522,27 @@ class Round {
     }
 
     getPlayerPremiumOptions(playerName) {
-        //check if player can call premiums at all
-        let options = { 'S': [], 'C': [], 'B': [] }
+        let options = { 'B': [] };
         if (playerName != this.players[this.playerTurn]) return options;
         if (this.suit == 'N') return options;
-
+    
         const playerHand = this.hands[this.playerTurn];
-        //check if player can call a Card series or 4 of a kind
-        if (playerHand.cards.length == 8) {
-            options['S'] = this.checkFor4CPremiums(playerHand)
-            options['C'] = this.checkForCardSeriesPremiums(playerHand)
-        }
-        // get belote options everytime
-        options['B'] = this.checkForBelotePremiums(playerHand)
-        // make sure premium options haven't been played before
-        for (const premium of this.premiums) {
-            // console.log(premium)
-            if (premium.premiumType === 'C') {
-                if (premium.belongsTo === playerName) {
-                    for (let optionIndex = 0; optionIndex < options.C.length; optionIndex++) {
-                        const option = options.C[optionIndex]
-                        let cardsAreTheSame = true;
-                        for (let i = 0; i < premium.cards.length; i++) {
-                            if (option[i].rank !== premium.cards[i].rank) cardsAreTheSame = false;
-                            if (option[i].suit !== premium.cards[i].suit) cardsAreTheSame = false;
-                            if (!cardsAreTheSame) break;
-                        }
-                        if (cardsAreTheSame) {
-                            options.C.splice(optionIndex, 1)
-                        }
-                    }
-                }
-            }
-            if (premium.premiumType === 'S') {
-                if (premium.belongsTo === playerName) {
-                    for (let optionIndex = 0; optionIndex < options.S.length; optionIndex++) {
-                        const option = options.S[optionIndex]
-                        let cardsAreTheSame = true;
-                        for (let i = 0; i < premium.cards.length; i++) {
-                            if (option[i].rank !== premium.cards[i].rank) cardsAreTheSame = false;
-                            if (option[i].suit !== premium.cards[i].suit) cardsAreTheSame = false;
-                            if (!cardsAreTheSame) break;
-                        }
-                        if (cardsAreTheSame) {
-                            options.S.splice(optionIndex, 1)
-                        }
-                    }
-                }
-            }
-
-        }
-        return options
+        options['B'] = this.checkForBelotePremiums(playerHand);
+        return options;
     }
 
     checkForBelotePremiums(hand) {
         const available_premiums = [];
-        //split cards into suits
-        const cardsBySuit = []
-        for (const suit of [...this.suit_ranks].slice(0, 4)) {
-            const cards = []
-            for (const card of hand.cards) {
-                if (card.suit == suit) cards.push(card)
-            }
-            cardsBySuit.push(cards)
-        }
-        //sort cards seperately
-        const sortedCardsPerSuit = []
-        for (let cards of cardsBySuit) {
-            sortedCardsPerSuit.push(this.sortCards(cards))
-        }
+        const cardsBySuit = this.sortCards(hand.cards);
 
-        for (const cards of sortedCardsPerSuit) {
-            for (let i = 0; i < cards.length - 1; i++) {
-                if ((cards[i].rank == 'Q') && (cards[i + 1].rank == 'K')) {
-                    if (new Premium(this.playerName, 'B', this.suit, [cards[i], cards[i + 1]]).valid == true) {
-                        if (this.suit == 'A') {
-                            if (this.cardsOnTable.cards.length == 0) available_premiums.push([cards[i], cards[i + 1]]);
-                            else if (this.cardsOnTable.cards[0].suit == cards[i].suit) available_premiums.push([cards[i], cards[i + 1]]);
-                        }
-                        else {
-                            // at this stage we know the belote cards are of the round trump suit because of the 1k checks we've had
-                            available_premiums.push([cards[i], cards[i + 1]])
-                        }
-                    }
+        for (let i = 0; i < cardsBySuit.length - 1; i++) {
+            if (cardsBySuit[i].rank == 'Q' && cardsBySuit[i + 1].rank == 'K' && cardsBySuit[i].suit == cardsBySuit[i + 1].suit) {
+                if (new Premium(this.players[this.playerTurn], 'B', this.suit, [cardsBySuit[i], cardsBySuit[i + 1]]).valid) {
+                    available_premiums.push([cardsBySuit[i], cardsBySuit[i + 1]]);
                 }
             }
         }
-
-        return available_premiums
+        return available_premiums;
     }
 
     checkForCardSeriesPremiums(hand) {
@@ -1071,107 +901,90 @@ class Game {
     }
 
     calculateGamePoints() {
-        let final_points = [0, 0]
-
-        const roundInfo = this.currentRound.getRoundResults()
-        //check if game has been played
+        let final_points = [0, 0];
+    
+        const roundInfo = this.currentRound.getRoundResults();
+        // Vérifier si le jeu a été joué
         if (roundInfo.suit) {
-            //calculate team scores
-            // console.log(roundInfo)
-            const teamTotalScores = [0, 0]
-            teamTotalScores[0] += roundInfo.card_scores[0]
-            teamTotalScores[1] += roundInfo.card_scores[1]
-            teamTotalScores[0] += roundInfo.premium_scores[0]
-            teamTotalScores[1] += roundInfo.premium_scores[1]
-
-            // calculate 10 points from last hand
-            teamTotalScores[roundInfo.lastHandTeam] += 10
-
-            // check if game was not played on (N)o trump
+            // Calcul des scores d'équipe
+            const teamTotalScores = [0, 0];
+            teamTotalScores[0] += roundInfo.card_scores[0];
+            teamTotalScores[1] += roundInfo.card_scores[1];
+    
+            // Ajouter les points de Belote uniquement
+            teamTotalScores[0] += roundInfo.premium_scores[0];
+            teamTotalScores[1] += roundInfo.premium_scores[1];
+    
+            // Calculer les 10 points pour la dernière main
+            teamTotalScores[roundInfo.lastHandTeam] += 10;
+    
+            // Doubler les points si le jeu est en "sans atout" (No Trump)
             if (roundInfo.suit == 'N') {
-                teamTotalScores[0] = teamTotalScores[0] * 2
-                teamTotalScores[1] = teamTotalScores[1] * 2
+                teamTotalScores[0] *= 2;
+                teamTotalScores[1] *= 2;
             }
-
-            // check if calling team lost
+    
+            // Vérifier si l'équipe appelante a perdu
             if (teamTotalScores[roundInfo.callerTeam] < teamTotalScores[(roundInfo.callerTeam + 1) % 2]) {
-                // if calling team lost give all their points to the other team
-                teamTotalScores[(roundInfo.callerTeam + 1) % 2] += teamTotalScores[roundInfo.callerTeam]
-                teamTotalScores[roundInfo.callerTeam] = 0
-                // check for modifier
+                // Transférer les points de l'équipe appelante à l'autre équipe
+                teamTotalScores[(roundInfo.callerTeam + 1) % 2] += teamTotalScores[roundInfo.callerTeam];
+                teamTotalScores[roundInfo.callerTeam] = 0;
+    
+                // Appliquer le multiplicateur
                 if (roundInfo.suit === 'A') final_points[(roundInfo.callerTeam + 1) % 2] += 2;
-                teamTotalScores[(roundInfo.callerTeam + 1) % 2] = teamTotalScores[(roundInfo.callerTeam + 1) % 2] * roundInfo.modifier
+                teamTotalScores[(roundInfo.callerTeam + 1) % 2] *= roundInfo.modifier;
                 final_points[(roundInfo.callerTeam + 1) % 2] = Math.floor((teamTotalScores[(roundInfo.callerTeam + 1) % 2] + 5) / 10);
-            }
-            else {
-                //calc points regardless if the game is equal
+            } else {
+                // Calcul des points en cas d'égalité
                 if (roundInfo.suit == 'N') {
-                    // handle no trump here
-                    teamTotalScores[roundInfo.callerTeam] += 5
-                    teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 5
-
-                    final_points[roundInfo.callerTeam] = Math.floor(teamTotalScores[roundInfo.callerTeam] / 10);
-                    final_points[(roundInfo.callerTeam + 1) % 2] = Math.floor(teamTotalScores[(roundInfo.callerTeam + 1) % 2] / 10);
+                    teamTotalScores[roundInfo.callerTeam] += 5;
+                    teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 5;
+                } else if (roundInfo.suit == 'A') {
+                    teamTotalScores[roundInfo.callerTeam] += 5;
+                    teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 6;
+                } else {
+                    teamTotalScores[roundInfo.callerTeam] += 3;
+                    teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 4;
                 }
-                else {
-                    if (roundInfo.suit == 'A') {
-                        // handle all trump suit here
-                        teamTotalScores[roundInfo.callerTeam] += 5;
-                        teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 6
-
-                        final_points[roundInfo.callerTeam] = Math.floor(teamTotalScores[roundInfo.callerTeam] / 10);
-                        final_points[(roundInfo.callerTeam + 1) % 2] = Math.floor(teamTotalScores[(roundInfo.callerTeam + 1) % 2] / 10);
-                    }
-                    else {
-                        // handle color suits here
-                        teamTotalScores[roundInfo.callerTeam] += 3;
-                        teamTotalScores[(roundInfo.callerTeam + 1) % 2] += 4
-
-                        final_points[roundInfo.callerTeam] = Math.floor(teamTotalScores[roundInfo.callerTeam] / 10);
-                        final_points[(roundInfo.callerTeam + 1) % 2] = Math.floor(teamTotalScores[(roundInfo.callerTeam + 1) % 2] / 10);
-                    }
-                }
-                // handle round modifier
-                final_points[0] = final_points[0] * roundInfo.modifier
-                final_points[1] = final_points[1] * roundInfo.modifier
-
-                // handle equal game here
+    
+                final_points[0] = Math.floor(teamTotalScores[0] * roundInfo.modifier / 10);
+                final_points[1] = Math.floor(teamTotalScores[1] * roundInfo.modifier / 10);
+    
+                // En cas d'égalité des scores, points suspendus pour l'équipe en défense
                 if (teamTotalScores[roundInfo.callerTeam] == teamTotalScores[(roundInfo.callerTeam + 1) % 2]) {
                     if (roundInfo.modifier == 1) {
-                        // defending team gets their points, atacking team doesn't
-                        this.hangingPoints += final_points[roundInfo.callerTeam]
-                        final_points[roundInfo.callerTeam] = 0
-                        teamTotalScores[roundInfo.callerTeam] = 0
-                    }
-                    else {
-                        // both team don't get any points and everything is put as hanging
-                        this.hangingPoints += final_points[0]
-                        this.hangingPoints += final_points[1]
-
-                        final_points[0] = 0
-                        final_points[1] = 0
-
-                        teamTotalScores[0] = 0
-                        teamTotalScores[1] = 0
+                        this.hangingPoints += final_points[roundInfo.callerTeam];
+                        final_points[roundInfo.callerTeam] = 0;
+                        teamTotalScores[roundInfo.callerTeam] = 0;
+                    } else {
+                        this.hangingPoints += final_points[0] + final_points[1];
+                        final_points[0] = final_points[1] = 0;
+                        teamTotalScores[0] = teamTotalScores[1] = 0;
                     }
                 }
             }
-            // add 9 big points for beating the other team with them not getting any hands
-            if (roundInfo.team_hand_count[0] == 0) roundInfo.team_hand_count[1] += 9
-            if (roundInfo.team_hand_count[1] == 0) roundInfo.team_hand_count[0] += 9
+    
+            // Ajouter 9 points si une équipe a fait toutes les levées
+            if (roundInfo.team_hand_count[0] == 0) teamTotalScores[1] += 9;
+            if (roundInfo.team_hand_count[1] == 0) teamTotalScores[0] += 9;
         }
-
-        // handle hanging points from previous round
+    
+        // Gérer les points suspendus
         if (this.hangingPoints > 0) {
-            if (teamTotalScores[roundInfo.callerTeam] > 0 && teamTotalScores[(roundInfo.callerTeam + 1) % 2] > 0)
+            if (teamTotalScores[roundInfo.callerTeam] > 0 && teamTotalScores[(roundInfo.callerTeam + 1) % 2] > 0) {
                 if (teamTotalScores[roundInfo.callerTeam] != teamTotalScores[(roundInfo.callerTeam + 1) % 2]) {
-                    if (teamTotalScores[roundInfo.callerTeam] > teamTotalScores[(roundInfo.callerTeam + 1) % 2]) final_points[roundInfo.callerTeam] += hangingPoints
-                    else final_points[[(roundInfo.callerTeam + 1) % 2]] += hangingPoints
+                    if (teamTotalScores[roundInfo.callerTeam] > teamTotalScores[(roundInfo.callerTeam + 1) % 2]) {
+                        final_points[roundInfo.callerTeam] += this.hangingPoints;
+                    } else {
+                        final_points[(roundInfo.callerTeam + 1) % 2] += this.hangingPoints;
+                    }
                 }
+            }
         }
-
-        return final_points
+    
+        return final_points;
     }
+    
 
     getGameInfo() {
         return {

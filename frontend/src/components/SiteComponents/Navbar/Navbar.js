@@ -56,6 +56,7 @@ const Our_Navbar = () => {
     // get local language settings
     const getLanguage = () => i18n.language || window.localStorage.i18nextLng;
 
+
     return (
         <Navbar bg="light" expand="lg" expanded={navExpanded}>
             <Navbar.Brand>
@@ -110,6 +111,13 @@ const Our_Navbar = () => {
                 </Nav>
                 <Nav>
                     <NavDropdown title={t('navbar.lang')}>
+                        {(getLanguage() !== 'fr') &&
+                            <NavDropdown.Item>
+                                <div onClick={() => { i18n.changeLanguage("fr") }}>
+                                    {t('navbar.langs.fr')}
+                                </div>
+                            </NavDropdown.Item>
+                        }
                         {(getLanguage() !== 'bg') &&
                             <NavDropdown.Item>
                                 <div onClick={() => { i18n.changeLanguage("bg") }}>

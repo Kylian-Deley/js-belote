@@ -378,7 +378,7 @@ const shouldCreateNewGame = (currentInstance, clients) => {
 
 // all server funcs
 const connectToServer = async (socket) => {
-    const connID = socket.handshake.query.client;
+    const connID = socket.handshake.query.clientId;
 
     // connect to socket if id is not already registered
     if (server_connections.indexOf(connID) == -1) {
